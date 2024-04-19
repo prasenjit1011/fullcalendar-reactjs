@@ -68,11 +68,19 @@ button:focus-visible {
   }
 }
 
+.fc-event{
+  background-color: #FFF;
+  border: 0px;
+}
 
 .btn{
   font-size:x-small;
-  background-color: #45c572;
-  margin: auto;
+  background-color: #f9f9f9;
+  color: #000;
+  border: 2px solid bisque;
+  border-radius: 0;
+  margin: 5px 2px;
+  align-items: center;
 }
 
 .modal {

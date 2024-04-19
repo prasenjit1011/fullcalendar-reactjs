@@ -7,43 +7,62 @@ import { useState } from 'react'
 const events = [
     {
         id: 'a',
-        title: 'my event',
+        title: 'my event 1',
+        status: 1,
         start: '2024-04-16'
     },
     { 
         id: 'b',
-        title: 'my event 2242',
+        status: 1,
+        title: 'my event 2',
         start: '2024-04-09'
     },
     { 
         id: 'c',
+        status: 0,
         title: 'my event 3',
         start: '2024-04-19'
     },
     { 
         id: 'c',
-        title: 'my event 3',
+        status: 1,
+        title: 'my event 4',
+        start: '2024-04-19'
+    },
+    { 
+        id: 'c',
+        status: 1,
+        title: 'my event 5',
+        start: '2024-04-19'
+    },
+    { 
+        id: 'c',
+        status: 0,
+        title: 'my event 6',
         start: '2024-04-22'
     },
     { 
         id: 'c',
-        title: 'my event 3',
+        status: 0,
+        title: 'my event 7',
         start: '2024-04-23'
     },
     { 
         id: 'd',
-        title: 'my event 4',
+        status: 0,
+        title: 'my event 8',
         start: '2024-04-20'
     },
     { 
         id: 'e',
-        title: 'my event 5',
+        status: 0,
+        title: 'my event 9',
         start: '2024-04-19' 
     }
 ]
 //events.setAllDay( false, [ settings ] )
 
-
+let randNum = parseInt(100*Math.random());
 
 export function Fullcalendar() {
     const [visibility, setVisibility] = useState(false);
@@ -53,11 +72,11 @@ export function Fullcalendar() {
         setVisibility(false)
     }
 
+
+
+
     return (
-        <div style={{width:1004, height:600, backgroundColor:'#45c572'}}>
-            <h3>
-                Hello Mike, 
-            </h3>
+        <>
             <Modal 
                 show={visibility} 
                 eventTitle={eventTitle} 
@@ -67,74 +86,95 @@ export function Fullcalendar() {
                 <p>Add Event</p>
             </Modal>
 
-            <div style={{width:1000, height:400, margin:2, backgroundColor:'#FEF'}}>
-                <FullCalendar
-                    plugins={[timeGridPlugin]}
-                    initialView='timeGridWeek'
-                    weekends={true}
-                    events={events}
-                    eventContent={renderEventContent}
-                    editable={true}
-                    dayCellContent={(val)=>{
+            <div style={{width:954, height:600, backgroundColor:'#45c572'}}>
+                <h3>
+                    Hello Mike {randNum}, 
+                </h3>
 
-                        if(val.isPast){
-                            return '';
-                        }
+                <div style={{width:950, height:400, margin:2, backgroundColor:'#FFF'}}>
+                    <FullCalendar
+                        plugins={[timeGridPlugin]}
+                        initialView='timeGridWeek'
+                        weekends={true}
+                        events={events}
+                        eventContent={(eventInfo)=>{
+                            return (
+                                <>
+                                    <div
+                                        style={{backgroundColor: eventInfo.event.extendedProps.status ? '#45c572':'#0095ff', padding:'2px', margin:'5px', border:'1px solid #F00'}} 
+                                        onClick={()=>{
+                                            let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
+                                            setEventTitle(eventInfo.event.title)
+                                            setEventDate(dtd)
+                                            setVisibility(true);
+                                        }}
+                                    >
+                                        <i>{eventInfo.event.title}</i>
+                                    </div>
+                                </>
+                            )
+                        }}
+                        editable={true}
+                        dayCellContent={(val)=>{
 
-                        return (
-                            <>
-                                <button 
-                                    className='btn' 
-                                    onClick={(event)=>{
-                                        let dtd = val.date.getFullYear()+"-"+('0' + (val.date.getMonth()+1)).slice(-2)+"-"+('0' + val.date.getDate()).slice(-2);
-                                        console.log(parseInt(100*Math.random()))
-                                        console.log(event);
-                                        setEventTitle('New Event');
-                                        setEventDate(dtd)
-                                        setVisibility(true);
+                            if(val.isPast){
+                                return '';
+                            }
 
-                                    }} 
-                                >
-                                    Add Item
-                                </button>
-                            </>)
-                    }}
-                />
-            </div>
-        </div>
-    )
-}
-
-// a custom render function
-function renderEventContent(eventInfo) {
-    console.log(parseInt(100*Math.random()), eventInfo);
-    return (
-        <>
-            <div onClick={()=>{
-                alert(eventInfo.event.title+' | '+eventInfo.event.start);
-                //setEventTitle(eventInfo.event.title)
-            }}>
-                <b>{eventInfo.timeText}</b>
-                <i>{eventInfo.event.title}</i>
+                            return (
+                                <>
+                                    <button 
+                                        className='btn' 
+                                        onClick={(event)=>{
+                                            let dtd = val.date.getFullYear()+"-"+('0' + (val.date.getMonth()+1)).slice(-2)+"-"+('0' + val.date.getDate()).slice(-2);
+                                            setEventTitle('New Event');
+                                            setEventDate(dtd)
+                                            setVisibility(true);
+                                        }} 
+                                    >
+                                        Add Item
+                                    </button>
+                                </>)
+                        }}
+                    />
+                </div>
             </div>
         </>
     )
 }
 
 
-const Modal = ({ closeModal, show, children, eventTitle, eventDate }) => {
+const Modal = ({ closeModal, children, show, eventTitle, eventDate }) => {
     const showHideClassName = show ? "modal display-block" : "modal display-none";
   
     return (
-      <div className={showHideClassName}>
-        <section className="modal-main">
-          {children}
-          <p>{eventDate}</p>
-          <p>{eventTitle}</p>
-          <button type="button" onClick={()=>{closeModal(false)}}>
-            Close 
-          </button>
-        </section>
-      </div>
+        <div className={showHideClassName}>
+            <section className="modal-main">
+                {children}
+                <table style={{width:"50%", margin:"10px auto 20px", padding:"10px"}}>
+                    <tr>
+                        <td width="30%">Date : </td>
+                        <td style={{textAlign:"left"}}>{eventDate}</td>
+                    </tr>
+                    <tr>
+                        <td>Title : </td>
+                        <td><input value={eventTitle} style={{width:"100%"}} /></td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td style={{textAlign:"left"}}>
+                            <input type='checkbox' />
+                        </td>
+                    </tr>
+                </table>
+                <button type="button" className='modalSaveBtn' onClick={()=>{closeModal(false)}} style={{marginBottom:"10px"}}>
+                    Save 
+                </button>
+                <button type="button" className='modalCloseBtn' onClick={()=>{closeModal(false)}} style={{marginBottom:"10px"}}>
+                    Close 
+                </button>
+                
+            </section>
+        </div>
     );
   };
