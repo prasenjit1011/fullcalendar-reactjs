@@ -96,7 +96,7 @@ button:focus-visible {
 .modal-main {
   position:fixed;
   background: white;
-  width: 80%;
+  width: 40%;
   height: auto;
   top:50%;
   left:50%;
@@ -111,5 +111,46 @@ button:focus-visible {
   display: none;
 }
 
+.modalFrm{
+  width:80%;
+  margin:10px auto 20px;
+  padding:10px;
+}
+
+.modalSaveBtn{
+  font-size:small;
+  background-color: #00F;
+  color: #FFF;
+  border: 2px solid bisque;
+  border-radius: 0;
+  margin: 5px 2px;
+  align-items: center;
+  margin-bottom:10px;
+}
+
+.modalCloseBtn{
+  font-size:small;
+  background-color: #f9f9f9;
+  color: #000;
+  border: 2px solid bisque;
+  border-radius: 0;
+  margin: 5px 2px;
+  align-items: center;
+  margin-bottom:10px;
+}
 
 
+.eventTitle{
+  padding:2px 5px;
+  margin:5px 0;
+  border:0px solid #0F0;
+  float: left;
+}
+
+.deleteEvent{
+  padding:2px;
+  margin:5px 0;
+  border:0px solid #0F0;
+  float: left;
+  background-color: #fe0000;
+}

@@ -66,8 +66,9 @@ let randNum = parseInt(100*Math.random());
 
 export function Fullcalendar() {
     const [visibility, setVisibility] = useState(false);
-    const [eventTitle, setEventTitle] = useState('Hello 4');
-    const [eventDate, setEventDate] = useState('Hello 4');
+    const [eventType, setEventType] = useState('');
+    const [eventTitle, setEventTitle] = useState('');
+    const [eventDate, setEventDate] = useState('');
     const closeModal = () =>{
         setVisibility(false)
     }
@@ -79,11 +80,12 @@ export function Fullcalendar() {
         <>
             <Modal 
                 show={visibility} 
+                eventType={eventType}
                 eventTitle={eventTitle} 
                 eventDate={eventDate}
                 closeModal={closeModal} 
             >
-                <p>Add Event</p>
+                
             </Modal>
 
             <div style={{width:954, height:600, backgroundColor:'#45c572'}}>
@@ -101,9 +103,11 @@ export function Fullcalendar() {
                             return (
                                 <>
                                     <div
-                                        style={{backgroundColor: eventInfo.event.extendedProps.status ? '#45c572':'#0095ff', padding:'2px', margin:'5px', border:'1px solid #F00'}} 
+                                        className='eventTitle' 
+                                        style={{backgroundColor: eventInfo.event.extendedProps.status ? '#45c572':'#0095ff'}}
                                         onClick={()=>{
                                             let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
+                                            setEventType('Edit Event')
                                             setEventTitle(eventInfo.event.title)
                                             setEventDate(dtd)
                                             setVisibility(true);
@@ -111,6 +115,19 @@ export function Fullcalendar() {
                                     >
                                         <i>{eventInfo.event.title}</i>
                                     </div>
+                                    <div
+                                        className='deleteEvent' 
+                                        onClick={()=>{
+                                            let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
+                                            setEventType('Delete Event')
+                                            setEventTitle(eventInfo.event.title)
+                                            setEventDate(dtd)
+                                            setVisibility(true);
+                                        }}
+                                    >
+                                        <i>X</i>
+                                    </div>
+                                    
                                 </>
                             )
                         }}
@@ -127,7 +144,8 @@ export function Fullcalendar() {
                                         className='btn' 
                                         onClick={(event)=>{
                                             let dtd = val.date.getFullYear()+"-"+('0' + (val.date.getMonth()+1)).slice(-2)+"-"+('0' + val.date.getDate()).slice(-2);
-                                            setEventTitle('New Event');
+                                            setEventType('Add Event')
+                                            setEventTitle('');
                                             setEventDate(dtd)
                                             setVisibility(true);
                                         }} 
@@ -144,14 +162,14 @@ export function Fullcalendar() {
 }
 
 
-const Modal = ({ closeModal, children, show, eventTitle, eventDate }) => {
+const Modal = ({ closeModal, children, show, eventType, eventTitle, eventDate }) => {
     const showHideClassName = show ? "modal display-block" : "modal display-none";
   
     return (
         <div className={showHideClassName}>
             <section className="modal-main">
-                {children}
-                <table style={{width:"50%", margin:"10px auto 20px", padding:"10px"}}>
+                <p>{eventType}</p>
+                <table className='modalFrm'>
                     <tr>
                         <td width="30%">Date : </td>
                         <td style={{textAlign:"left"}}>{eventDate}</td>
@@ -167,10 +185,10 @@ const Modal = ({ closeModal, children, show, eventTitle, eventDate }) => {
                         </td>
                     </tr>
                 </table>
-                <button type="button" className='modalSaveBtn' onClick={()=>{closeModal(false)}} style={{marginBottom:"10px"}}>
+                <button type="button" className='modalSaveBtn' onClick={()=>{closeModal(false)}} >
                     Save 
                 </button>
-                <button type="button" className='modalCloseBtn' onClick={()=>{closeModal(false)}} style={{marginBottom:"10px"}}>
+                <button type="button" className='modalCloseBtn' onClick={()=>{closeModal(false)}} >
                     Close 
                 </button>
                 
