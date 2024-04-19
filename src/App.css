@@ -40,3 +40,23 @@
 .read-the-docs {
   color: #888;
 }
+
+.fc .fc-daygrid-day-top{
+  display: block;
+}
+
+.fc .fc-scrollgrid-liquid{
+  height: auto;
+}
+
+.fc-scrollgrid-section-liquid{
+  display: none;
+}
+
+.fc-timegrid-slots{
+  display: none;
+}
+
+.fc-scrollgrid-section-liquid{
+  display: znone;
+}
