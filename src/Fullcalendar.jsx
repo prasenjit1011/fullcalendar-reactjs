@@ -19,9 +19,33 @@ export function Fullcalendar() {
         setVisibility(false)
     }
 
+    const completeEvent = (eventId) => {
+        let frmData     = JSON.stringify({eventId: parseInt(eventId), status:1});
+
+        fetch(apiHost+'api/event',{
+            method:'put',
+            mode:'cors',
+            body:frmData,
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            getEvent();
+            console.log(data);
+            setVisibility(false)
+        })
+        .catch(err=>{
+            console.log('-- API error to save event--', parseInt(100*Math.random()));
+            //console.log(err);
+            setVisibility(false)
+        });
+    }
+
     const deleteEvent = (eventId) => {
         let frmData     = JSON.stringify({eventId: parseInt(eventId)});
-        fetch(apiHost+'api/event/delete',{
+        fetch(apiHost+'api/event',{
             method:'delete',
             mode:'cors',
             body:frmData,
@@ -33,6 +57,7 @@ export function Fullcalendar() {
         .then(data=>{
             console.log('-:  Event delete API :-', parseInt(100*Math.random()));
             getEvent();
+            setVisibility(false);
         })
         .catch(err=>{
             console.log('-- API error to save event--', parseInt(100*Math.random()));
@@ -101,6 +126,7 @@ export function Fullcalendar() {
                 closeModal={closeModal} 
                 saveEvent={saveEvent}
                 deleteEvent={deleteEvent}
+                completeEvent={completeEvent}
             />
 
             <div style={{width:954, height:600, backgroundColor:'#45c572'}}>
@@ -113,8 +139,26 @@ export function Fullcalendar() {
                         weekends={true}
                         events={eventList}
                         eventContent={(eventInfo)=>{
+                            console.log(eventInfo)
                             return (
                                 <div>
+                                    {
+                                        eventInfo.event.extendedProps.status == 0 ?
+                                            <div
+                                                className='successEvent' 
+                                                onClick={()=>{
+                                                    let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
+                                                    setEventType(4)
+                                                    setEventId(eventInfo.event.id)
+                                                    setEventTitle(eventInfo.event.title)
+                                                    setEventDate(dtd)
+                                                    setVisibility(true);
+                                                }}
+                                            >
+                                                <i>&#10003;</i>
+                                            </div>:''
+                                    }
+
                                     <div
                                         className='eventTitle' 
                                         style={{backgroundColor: eventInfo.event.extendedProps.status ? '#45c572':'#0095ff'}}
@@ -129,19 +173,22 @@ export function Fullcalendar() {
                                     >
                                         <i>{eventInfo.event.title}</i>
                                     </div>
-                                    <div
-                                        className='deleteEvent' 
-                                        onClick={()=>{
-                                            let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
-                                            setEventType(3)
-                                            setEventId(eventInfo.event.id)
-                                            setEventTitle(eventInfo.event.title)
-                                            setEventDate(dtd)
-                                            setVisibility(true);
-                                        }}
-                                    >
-                                        <i>X</i>
-                                    </div>
+                                    {
+                                        eventInfo.event.extendedProps.status == 0 ?
+                                            <div
+                                                className='deleteEvent' 
+                                                onClick={()=>{
+                                                    let dtd = eventInfo.event.start.getFullYear()+"-"+('0' + (eventInfo.event.start.getMonth()+1)).slice(-2)+"-"+('0' + eventInfo.event.start.getDate()).slice(-2);
+                                                    setEventType(3)
+                                                    setEventId(eventInfo.event.id)
+                                                    setEventTitle(eventInfo.event.title)
+                                                    setEventDate(dtd)
+                                                    setVisibility(true);
+                                                }}
+                                            >
+                                                <i>X</i>
+                                            </div>:''
+                                    }
                                     
                                 </div>
                             )
@@ -150,7 +197,7 @@ export function Fullcalendar() {
                         dayCellContent={(val)=>{
 
                             if(val.isPast){
-                                //return '';
+                                return '';
                             }
 
                             return (
@@ -178,7 +225,7 @@ export function Fullcalendar() {
 }
 
 
-const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, eventTitle, saveEvent, deleteEvent }) => {
+const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, eventTitle, saveEvent, deleteEvent, completeEvent }) => {
     const showHideClassName = show ? "modal display-block" : "modal display-none";
     const [taskTitle, setTaskTitle] = useState('');
 
@@ -189,9 +236,10 @@ const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, even
     return (
         <div className={showHideClassName}>
             <section className="modal-main">
-                {   eventType == 1 ? 'Add Event':'' }
-                {   eventType == 2 ? 'Edit Event':'' }
-                {   eventType == 3 ? 'Delete Event':'' }
+                {   eventType == 1 ? 'Add Task':'' }
+                {   eventType == 2 ? 'Edit Task':'' }
+                {   eventType == 3 ? 'Delete Task':'' }
+                {   eventType == 4 ? 'Task Completed':'' }
                 <table className='modalFrm'>
                     <tbody>
                         <tr>
@@ -206,7 +254,7 @@ const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, even
                                         <input value={taskTitle} style={{width:"100%"}} onChange={(arg)=>{setTaskTitle(arg.target.value)}} />:''
                                 }
                                 {
-                                    eventType == 3 ? taskTitle:''
+                                    eventType == 3 || eventType == 4 ? taskTitle:''
                                 }
                             </td>
                         </tr>
@@ -215,29 +263,17 @@ const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, even
                 
                 <button 
                     type="button" 
-                    className={eventType == 1 || eventType == 2 ? "modalSaveBtn":"modalDeleteBtn" } 
+                    className={eventType == 1 || eventType == 2 || eventType == 4 ? "modalSaveBtn":"modalDeleteBtn" } 
                     onClick={()=>{
-                        eventType == 1 || eventType == 2 ?
-                            saveEvent(eventId, eventDate, taskTitle):deleteEvent(eventId)
+                        eventType == 1 || eventType == 2 ? saveEvent(eventId, eventDate, taskTitle) : ''
+                        eventType == 3 ? deleteEvent(eventId) : ''
+                        eventType == 4 ? completeEvent(eventId) : ''
                     }} 
                 >
-                    {eventType == 1 || eventType == 2 ? "Save":"Delete" }
+                    {eventType == 1 || eventType == 2 ? "Save":"" }
+                    {eventType == 3 ? "Delete":"" }
+                    {eventType == 4 ? "Completed":"" }
                 </button>
-
-
-
-                {   
-                    eventType == 1 || eventType == 2 ? 
-                        <button type="button" className='modalSaveBtn' onClick={()=>{saveEvent(eventId, eventDate, taskTitle)}} >
-                            Save 
-                        </button>:''
-                }
-                {   
-                    eventType == 3 ?
-                        <button type="button" className='modalDeleteBtn' onClick={()=>{deleteEvent(eventId)}} >
-                            Delete 
-                        </button>:''
-                }
 
                 <button type="button" className='modalCloseBtn' onClick={()=>{closeModal(false)}} >
                     Close 

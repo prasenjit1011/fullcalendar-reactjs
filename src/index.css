@@ -158,6 +158,14 @@ button:focus-visible {
   float: left;
 }
 
+.successEvent{
+  padding:2px;
+  margin:5px 0;
+  border:0px solid #45c572;
+  float: left;
+  background-color: #45c572;
+}
+
 .deleteEvent{
   padding:2px;
   margin:5px 0;
