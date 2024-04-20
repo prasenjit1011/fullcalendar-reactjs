@@ -41,6 +41,10 @@
   color: #888;
 }
 
+.fc-day{
+  text-align: center;
+}
+
 .fc .fc-daygrid-day-top{
   display: block;
 }

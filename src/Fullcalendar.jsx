@@ -2,7 +2,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const events = [
     {
@@ -73,6 +73,11 @@ export function Fullcalendar() {
         setVisibility(false)
     }
 
+    const saveEvent = (eventDtd, eventTitle) => {
+        console.log('-- Here --', parseInt(100*Math.random()), eventDtd, eventTitle);
+        fetch().then(res=>res.json()).then(result=>{console.log();(res)}).catch((e)=>{console.log(e)});
+    }
+
 
 
 
@@ -84,6 +89,7 @@ export function Fullcalendar() {
                 eventTitle={eventTitle} 
                 eventDate={eventDate}
                 closeModal={closeModal} 
+                saveEvent={saveEvent}
             >
                 
             </Modal>
@@ -101,7 +107,7 @@ export function Fullcalendar() {
                         events={events}
                         eventContent={(eventInfo)=>{
                             return (
-                                <>
+                                <div>
                                     <div
                                         className='eventTitle' 
                                         style={{backgroundColor: eventInfo.event.extendedProps.status ? '#45c572':'#0095ff'}}
@@ -128,7 +134,7 @@ export function Fullcalendar() {
                                         <i>X</i>
                                     </div>
                                     
-                                </>
+                                </div>
                             )
                         }}
                         editable={true}
@@ -162,30 +168,31 @@ export function Fullcalendar() {
 }
 
 
-const Modal = ({ closeModal, children, show, eventType, eventTitle, eventDate }) => {
+const Modal = ({ closeModal, children, show, eventType, eventDate, eventTitle, saveEvent }) => {
     const showHideClassName = show ? "modal display-block" : "modal display-none";
-  
+    const [taskTitle, setTaskTitle] = useState('');
+
+    useEffect(()=>{
+        setTaskTitle(eventTitle);
+    },[eventTitle]);
+
     return (
         <div className={showHideClassName}>
             <section className="modal-main">
                 <p>{eventType}</p>
                 <table className='modalFrm'>
-                    <tr>
-                        <td width="30%">Date : </td>
-                        <td style={{textAlign:"left"}}>{eventDate}</td>
-                    </tr>
-                    <tr>
-                        <td>Title : </td>
-                        <td><input value={eventTitle} style={{width:"100%"}} /></td>
-                    </tr>
-                    <tr>
-                        <td>Status</td>
-                        <td style={{textAlign:"left"}}>
-                            <input type='checkbox' />
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td width="30%">Date : </td>
+                            <td style={{textAlign:"left"}}>{eventDate}</td>
+                        </tr>
+                        <tr>
+                            <td>Title : </td>
+                            <td><input value={taskTitle} style={{width:"100%"}} onChange={(arg)=>{setTaskTitle(arg.target.value)}} /></td>
+                        </tr>
+                    </tbody>
                 </table>
-                <button type="button" className='modalSaveBtn' onClick={()=>{closeModal(false)}} >
+                <button type="button" className='modalSaveBtn' onClick={()=>{saveEvent(eventDate, taskTitle)}} >
                     Save 
                 </button>
                 <button type="button" className='modalCloseBtn' onClick={()=>{closeModal(false)}} >
