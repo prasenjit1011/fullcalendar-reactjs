@@ -4,6 +4,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 
+const apiHost   = 'http://localhost:3000/';
 const events = [
     {
         id: 'a',
@@ -75,10 +76,50 @@ export function Fullcalendar() {
 
     const saveEvent = (eventDtd, eventTitle) => {
         console.log('-- Here --', parseInt(100*Math.random()), eventDtd, eventTitle);
-        fetch().then(res=>res.json()).then(result=>{console.log();(res)}).catch((e)=>{console.log(e)});
+
+        
+
+        let frmData     = JSON.stringify({eventDate:eventDtd, eventTitle:eventTitle});
+
+        fetch(apiHost+'api/event',{
+            method:'post',
+            mode:'cors',
+            body:frmData,
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            setMsg(data.msg);
+            setVisibility(false)
+        })
+        .catch(err=>{
+            console.log('-- API error to save event--');
+            //console.log(err);
+            setVisibility(false)
+        });
     }
 
-
+    useEffect(()=>{
+        fetch(apiHost+'api/calendar',{
+            method:'get',
+            mode:'cors',
+            headers:{
+                'Content-Type':'application/json'
+            }
+        })
+        .then(response=>response.json())
+        .then(data=>{
+            setMsg(data.msg);
+            setVisibility(false)
+        })
+        .catch(err=>{
+            console.log('-- API error to save event--');
+            //console.log(err);
+            setVisibility(false)
+        });;
+    });
 
 
     return (
