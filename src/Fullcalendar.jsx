@@ -286,4 +286,4 @@ const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, even
             </section>
         </div>
     );
-  };
+};
