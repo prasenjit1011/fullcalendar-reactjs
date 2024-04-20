@@ -4,6 +4,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useEffect, useState } from 'react'
 
+const timenow   = new Date().getTime();
 const apiHost   = 'http://localhost:3000/';
 
 let randNum = parseInt(100*Math.random());
@@ -130,7 +131,7 @@ export function Fullcalendar() {
             />
 
             <div style={{width:954, height:600, backgroundColor:'#45c572'}}>
-                <h3>Hello Mike {randNum},</h3>
+                <h3>Hello Mike,</h3>
 
                 <div style={{width:950, height:400, margin:2, backgroundColor:'#FFF'}}>
                     <FullCalendar
@@ -139,7 +140,7 @@ export function Fullcalendar() {
                         weekends={true}
                         events={eventList}
                         eventContent={(eventInfo)=>{
-                            console.log(eventInfo)
+
                             return (
                                 <div>
                                     {
@@ -200,6 +201,10 @@ export function Fullcalendar() {
                                 return '';
                             }
 
+                            if(parseInt((val.date.getTime()-timenow)/(1000 * 60 * 60 * 24)) > 6){
+                                return '';
+                            }
+
                             return (
                                 <>
                                     <button 
@@ -251,7 +256,7 @@ const Modal = ({ closeModal, children, show, eventType, eventId, eventDate, even
                             <td style={{textAlign:"left"}}>
                                 {
                                     eventType == 1 || eventType == 2 ? 
-                                        <input value={taskTitle} style={{width:"100%"}} onChange={(arg)=>{setTaskTitle(arg.target.value)}} />:''
+                                        <input value={taskTitle} style={{width:"100%"}} onChange={(arg)=>{setTaskTitle(arg.target.value)}} placeholder='Event Title' />:''
                                 }
                                 {
                                     eventType == 3 || eventType == 4 ? taskTitle:''
